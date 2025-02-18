@@ -1,24 +1,29 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"strings"
 )
 
-// Функция для проверки, соответствует ли строка правилам первой популяции
 func A(input string) (string, bool) {
 	input = strings.TrimSpace(input)
 	inputB, isRuleB := B(input)
+	inputB = strings.TrimSpace(inputB)
+
 	if !isRuleB {
 		return "", false
 	}
+
 	return D(inputB)
 }
 
-// Функция для проверки правила 2 первой популяции
 func B(input string) (string, bool) {
 	input = strings.TrimSpace(input)
 	inputB, isRuleB := C(input)
+	inputB = strings.TrimSpace(inputB)
+
 	if !isRuleB {
 		return "", false
 	}
@@ -50,11 +55,10 @@ func C(input string) (string, bool) {
 	return "", false
 }
 
-// Функция для проверки правила 2 первой популяции
 func D(input string) (string, bool) {
 	input = strings.TrimSpace(input)
-	if strings.HasPrefix(input, "ay") {
-		inputA, isRuleA := A(strings.TrimPrefix(input, "ay"))
+	if strings.HasPrefix(input, "ау") {
+		inputA, isRuleA := A(strings.TrimPrefix(input, "ау"))
 		if !isRuleA {
 			return "", true
 		}
@@ -62,7 +66,7 @@ func D(input string) (string, bool) {
 		return inputA, true
 	}
 
-	return "", true
+	return input, true
 }
 
 func E(input string) (string, bool) {
@@ -76,66 +80,82 @@ func E(input string) (string, bool) {
 		return inputB, true
 	}
 
-	return "", true
+	return input, true
 }
 
-// Функция для проверки, соответствует ли строка правилам второй популяции
-func checkSecondPopulation(input string) bool {
+func A2(input string) (string, bool) {
 	input = strings.TrimSpace(input)
-	if strings.HasPrefix(input, "ой ") {
-		parts := strings.SplitN(input, " ой ", 2)
-		if len(parts) == 2 && strings.Contains(parts[1], " ай ") {
-			innerParts := strings.SplitN(parts[1], " ай ", 2)
-			return checkSecondPopulationRule2(parts[0]) && checkSecondPopulationRule3(innerParts[1])
+
+	if strings.HasPrefix(input, "ой") {
+		inputB2, isRuleB2 := B2(strings.TrimPrefix(input, "ой"))
+		inputB2 = strings.TrimSpace(inputB2)
+
+		if isRuleB2 {
+			if strings.HasPrefix(inputB2, "ай") {
+				return C2(strings.TrimPrefix(inputB2, "ай"))
+			}
 		}
 	}
-	if input == "ну" || strings.HasPrefix(input, "ну ") {
-		return checkSecondPopulationRule2(input)
-	}
-	if strings.HasPrefix(input, "хо ") {
-		return checkSecondPopulationRule3(input)
-	}
-	return false
+
+	return "", false
 }
 
-// Функция для проверки правила 2 второй популяции
-func checkSecondPopulationRule2(input string) bool {
+func B2(input string) (string, bool) {
 	input = strings.TrimSpace(input)
-	if input == "ну" {
-		return true
+
+	if strings.HasPrefix(input, "ну") {
+		inputB2, isRule2 := B2(strings.TrimPrefix(input, "ну"))
+		inputB2 = strings.TrimSpace(inputB2)
+
+		if !isRule2 {
+			return strings.TrimPrefix(input, "ну"), true
+		}
+		return inputB2, true
 	}
-	if strings.HasPrefix(input, "ну ") {
-		return checkSecondPopulationRule2(strings.TrimPrefix(input, "ну "))
-	}
-	return false
+
+	return "", false
 }
 
-// Функция для проверки правила 3 второй популяции
-func checkSecondPopulationRule3(input string) bool {
+func C2(input string) (string, bool) {
 	input = strings.TrimSpace(input)
-	if input == "ух-ты" {
-		return true
+
+	if strings.HasPrefix(input, "хо") {
+		inputC2, isRuleC2 := C2(strings.TrimPrefix(input, "хо"))
+		inputC2 = strings.TrimSpace(inputC2)
+
+		if isRuleC2 {
+			if strings.HasPrefix(input, "хо") {
+				return strings.TrimPrefix(inputC2, "хо"), true
+			}
+		}
 	}
-	if strings.HasPrefix(input, "хо ") {
-		return checkSecondPopulationRule3(strings.TrimPrefix(input, "хо "))
+
+	if strings.HasPrefix(input, "ух-ты") {
+		return strings.TrimPrefix(input, "ух-ты"), true
 	}
-	return false
+
+	return "", false
 }
 
 func classifyMonkey(input string) string {
+	input = strings.ToLower(input)
+
 	_, isRule := A(input)
 	if isRule {
 		return "Первая популяция"
-	} else if checkSecondPopulation(input) {
+	}
+	_, isRule2 := A2(input)
+	if isRule2 {
 		return "Вторая популяция"
 	}
 	return "Неместная обезьяна"
 }
 
 func main() {
-	var input string
 	fmt.Println("Введите монолог обезьяны:")
-	fmt.Scanln(&input)
+
+	reader := bufio.NewReader(os.Stdin)
+	input, _ := reader.ReadString('\n')
 
 	result := classifyMonkey(input)
 	fmt.Println(result)

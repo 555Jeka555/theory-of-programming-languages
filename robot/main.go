@@ -7,14 +7,20 @@ import (
 	"strings"
 )
 
+var commandCount int
+
 func S(input string) (string, bool) {
 	input = strings.TrimSpace(input)
 
 	if strings.HasPrefix(input, "start") {
+		commandCount++
+
 		inputA, isRuleA := A(strings.TrimPrefix(input, "start"))
 
 		if isRuleA {
 			if strings.HasPrefix(inputA, "stop") {
+				commandCount++
+
 				return strings.TrimSpace(strings.TrimPrefix(input, "stop")), true
 			}
 		}
@@ -44,22 +50,32 @@ func C(input string) (string, bool) {
 	input = strings.TrimSpace(input)
 
 	if strings.HasPrefix(input, "left") {
+		commandCount++
+
 		return strings.TrimSpace(strings.TrimPrefix(input, "left")), true
 	}
 
 	if strings.HasPrefix(input, "right") {
+		commandCount++
+
 		return strings.TrimSpace(strings.TrimPrefix(input, "right")), true
 	}
 
 	if strings.HasPrefix(input, "on45") {
+		commandCount++
+
 		return C(strings.TrimPrefix(input, "on45"))
 	}
 
 	if strings.HasPrefix(input, "hands_up") {
+		commandCount++
+
 		inputA, isRuleA := A(strings.TrimPrefix(input, "hands_up"))
 
 		if isRuleA {
 			if strings.HasPrefix(inputA, "hands_down") {
+				commandCount++
+
 				return strings.TrimSpace(strings.TrimPrefix(inputA, "hands_down")), true
 			}
 		}
@@ -72,6 +88,8 @@ func Z(input string) (string, bool) {
 	input = strings.TrimSpace(input)
 
 	if strings.HasPrefix(input, "turn_head") {
+		commandCount++
+
 		inputC, isRuleC := C(strings.TrimPrefix(input, "turn_head"))
 		if isRuleC {
 			return strings.TrimSpace(inputC), true
@@ -85,19 +103,26 @@ func Y(input string) (string, bool) {
 	input = strings.TrimSpace(input)
 
 	if strings.HasPrefix(input, "step_(") {
+		commandCount++
+
 		input = strings.TrimPrefix(input, "step_(")
 
 		inputF, isRuleF := F(input)
 		if isRuleF {
-			input = strings.TrimPrefix(inputF, ")")
-			input = strings.TrimSpace(input)
+			commandCount++
+			if strings.HasPrefix(inputF, ")") {
+				commandCount++
 
-			inputY, isRuleY := Y(input)
-			if isRuleY {
-				inputC, isRuleC := C(strings.TrimSpace(inputY))
+				input = strings.TrimPrefix(inputF, ")")
+				input = strings.TrimSpace(input)
 
-				if isRuleC {
-					return Y(inputC)
+				inputY, isRuleY := Y(input)
+				if isRuleY {
+					inputC, isRuleC := C(strings.TrimSpace(inputY))
+
+					if isRuleC {
+						return Y(inputC)
+					}
 				}
 			}
 
@@ -138,6 +163,8 @@ func classifyRobot(input string) string {
 	if isRule {
 		return "OK"
 	}
+
+	commandCount++
 	return "ERROR"
 }
 
@@ -149,4 +176,5 @@ func main() {
 
 	result := classifyRobot(input)
 	fmt.Println(result)
+	fmt.Println(commandCount)
 }

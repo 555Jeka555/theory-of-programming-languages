@@ -140,12 +140,13 @@ func C2(input string) (string, bool) {
 func classifyMonkey(input string) string {
 	input = strings.ToLower(input)
 
-	_, isRule := A(input)
-	if isRule {
+	in, isRule := A(input)
+	if isRule && in == "" {
 		return "Первая популяция"
 	}
-	_, isRule2 := A2(input)
-	if isRule2 {
+
+	in, isRule2 := A2(input)
+	if isRule2 && in == "" {
 		return "Вторая популяция"
 	}
 	return "Неместная обезьяна"

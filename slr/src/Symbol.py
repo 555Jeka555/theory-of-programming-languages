@@ -18,4 +18,6 @@ class Symbol:
     def __str__(self) -> str:
         if self.num_of_rule is not None and self.num_of_right_part is not None:
             return f"{self.name}{self.num_of_rule + 1}{self.num_of_right_part + 1}"
+        if self.num_of_rule is not None:
+            return f"{self.name}{self.num_of_rule + 1}"
         return self.name

@@ -3,6 +3,7 @@ from typing import Optional, NamedTuple
 from ReadGrammar import read_grammar
 from CreateTable import create_table
 from PrintTable import print_table
+from Analizer import Analyzer
 
 
 class Args(NamedTuple):
@@ -52,6 +53,15 @@ def main() -> int:
     except IOError:
         print(f"Output file is not found: {args.output_file_name}")
         return 1
+
+    try:
+        analyzer = Analyzer(table, grammar)
+        with open('../input.txt', 'r') as input_file:
+            analyzer.analyze(input_file)
+
+        print("OK")
+    except Exception as e:
+        print("ERROR", e)
 
     return 0
 

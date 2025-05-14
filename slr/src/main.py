@@ -1,63 +1,60 @@
 import sys
-from lab6.main import task
-from grammar_utils import parse_grammar, parse_grammar_with_first_set, write_grammar, Grammar
-from src.grammar import factorize_grammar, remove_direct_recursion, remove_indirect_recursion, remove_unreachable_rules, \
-    calculate_directing_sets
+from typing import Optional, NamedTuple
+from ReadGrammar import read_grammar
+from CreateTable import create_table
+from PrintTable import print_table
 
 
-def parse_new_grammar() -> None:
-    with open("../new-grammar.txt", "r", encoding="utf-8") as f:
-        grammar = parse_grammar_with_first_set(f.readlines())
-
-    print(grammar)
+class Args(NamedTuple):
+    input_file_name: str
+    output_file_name: str
 
 
-def parse_grammar() -> tuple[Grammar, str]:
-    with open("../grammar.txt", "r", encoding="utf-8") as f:
-        grammar, axiom_nonterminal = parse_grammar(f.readlines())
+def parse_args() -> Optional[Args]:
+    if len(sys.argv) != 3:
+        print("Invalid quantity of arguments")
+        print("Usage: python main.py <input_file> <output_file>")
+        return None
 
-    grammar = factorize_grammar(grammar)
-
-    grammar = remove_indirect_recursion(grammar)
-
-    grammar = remove_direct_recursion(grammar)
-
-    grammar = remove_unreachable_rules(grammar, axiom_nonterminal)
-
-    axiom = grammar.rules[axiom_nonterminal]
-
-    needs_new_axiom = False
-    if len(axiom.productions) > 1:
-        needs_new_axiom = True
-    elif axiom.productions and (axiom.nonterminal in axiom.productions[0].symbols or (
-            axiom.productions[0].symbols and axiom.productions[0].symbols[-1].startswith('<') and
-            axiom.productions[0].symbols[-1].endswith('>'))):
-        needs_new_axiom = True
-
-    if needs_new_axiom:
-        grammar.add_production("<axiom>", [axiom_nonterminal, "END"], [])
-        axiom_nonterminal = "<axiom>"
-
-    grammar = calculate_directing_sets(grammar, axiom_nonterminal)
-
-    write_grammar(grammar, axiom_nonterminal)
-
-    return grammar, axiom_nonterminal
+    return Args(input_file_name=sys.argv[1], output_file_name=sys.argv[2])
 
 
-def task4() -> None:
-    if len(sys.argv) != 2:
-        print(f'Usage: python {sys.argv[0]} <input-file>')
-        return
+def main() -> int:
+    args = parse_args()
+    if args is None:
+        return 1
 
-    input_file = sys.argv[1]
+    try:
+        with open(args.input_file_name, 'r') as input_file:
+            grammar = read_grammar(input_file)
+    except IOError:
+        print(f"Input file is not found: {args.input_file_name}")
+        return 1
 
-    tokens = task(input_file)
-    line = " ".join(token.type for token in tokens)
+    # Вывод информации о грамматике
+    for rule in grammar:
+        print(f"{rule.non_terminal} -> ", end="")
+        print(" ".join(rule.right_part), end="")
+        print(" / ", end="")
+        for s in rule.direction_symbols:
+            print(s.name, end="")
+            if s.num_of_rule is not None:
+                print(s.num_of_rule + 1, end="")
+            if s.num_of_right_part is not None:
+                print(s.num_of_right_part + 1, end="")
+            print(" | ", end="")
+        print()
 
-    parse_grammar()
-    parse_new_grammar()
+    try:
+        with open(args.output_file_name, 'w') as output_file:
+            table = create_table(grammar)
+            print_table(table, output_file)
+    except IOError:
+        print(f"Output file is not found: {args.output_file_name}")
+        return 1
+
+    return 0
 
 
 if __name__ == "__main__":
-    task4()
+    sys.exit(main())

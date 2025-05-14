@@ -5,14 +5,14 @@ from src.grammar import factorize_grammar, remove_direct_recursion, remove_indir
     calculate_directing_sets
 
 
-def task1() -> None:
+def parse_new_grammar() -> None:
     with open("../new-grammar.txt", "r", encoding="utf-8") as f:
         grammar = parse_grammar_with_first_set(f.readlines())
 
     print(grammar)
 
 
-def task3() -> tuple[Grammar, str]:
+def parse_grammar() -> tuple[Grammar, str]:
     with open("../grammar.txt", "r", encoding="utf-8") as f:
         grammar, axiom_nonterminal = parse_grammar(f.readlines())
 
@@ -55,8 +55,8 @@ def task4() -> None:
     tokens = task(input_file)
     line = " ".join(token.type for token in tokens)
 
-    task3()
-    task1()
+    parse_grammar()
+    parse_new_grammar()
 
 
 if __name__ == "__main__":

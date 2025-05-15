@@ -1,8 +1,8 @@
-S -> E #
-E -> E + T
+S -> E END
+E -> E PLUS T
 E -> T
-T -> T * F
+T -> T MULTIPLICATION F
 T -> F
-F -> - F
-F -> ( E )
-F -> id
+F -> MINUS F
+F -> LEFT_PAREN E RIGHT_PAREN
+F -> IDENTIFIER

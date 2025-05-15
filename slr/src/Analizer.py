@@ -57,6 +57,9 @@ class Analyzer:
 
     def analyze(self, input_file: TextIO) -> None:
         self.generate_tokens_from_file(input_file)
+        print(self.grammar)
+        for t in self.tokens:
+            print(t)
 
         if not self.table.strings:
             raise RuntimeError("Table is empty!")
@@ -66,7 +69,9 @@ class Analyzer:
 
         while is_analyzing:
             is_state = self.get_state() is not None
-            symbol = self.get_state() if is_state else self.read_token().value
+            if self.read_token() is None:
+                break
+            symbol = self.get_state() if is_state else self.read_token().type
 
             if symbol is None:
                 raise RuntimeError("Unexpected end")
@@ -81,6 +86,8 @@ class Analyzer:
             print("Token stack: ", " ".join(self.token_stack))
             print()
 
+            print("curr", symbol)
+            print("next", current_str.next_symbols)
             next_state = current_str.next_symbols.get(symbol, [])
 
             if len(next_state) == 1 and next_state[0].name == "OK":

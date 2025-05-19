@@ -1,8 +1,9 @@
-program -> PROGRAM IDENTIFIER SEMICOLON block
+program -> PROGRAM IDENTIFIER SEMICOLON block END DOT
 program -> PROGRAM IDENTIFIER SEMICOLON
-block -> BEGIN stmt_list
+block -> BEGIN stmt_list DOT
+block -> BEGIN stmt_list SEMICOLON
 block -> BEGIN END
-stmt_list -> END DOT
+stmt_list -> END
 stmt_list -> stmt stmt_list
 stmt -> decl SEMICOLON
 stmt -> assign SEMICOLON

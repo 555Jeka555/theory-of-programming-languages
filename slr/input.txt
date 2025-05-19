@@ -10,8 +10,17 @@ BEGIN
 
   i := 0;
   WHILE i < 9 LOOP
+  BEGIN
     j := 0;
-
+        WHILE j < 9 - i LOOP
+        BEGIN
+            IF arr[j] > arr[j+1] THEN
+            BEGIN
+                temp := arr[j];
+                arr[j] := arr[j+1];
+                arr[j+1] := temp;
+            END;
+        END;
     i := i + 1;
   END;
 END.

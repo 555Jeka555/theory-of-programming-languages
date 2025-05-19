@@ -24,12 +24,15 @@ class AmbiguousGrammarError(GrammarError):
 
 
 def is_reachable(grammar: List[Rule], start_symbol: str = None) -> bool:
-    """Проверяет, все ли нетерминалы достижимы из начального символа."""
+    """Проверяет достижимость с правильным определением нетерминалов"""
     if not grammar:
         return True
 
     if start_symbol is None:
         start_symbol = grammar[0].non_terminal
+
+    # Все нетерминалы - это левые части правил
+    all_non_terminals = {rule.non_terminal for rule in grammar}
 
     reachable = {start_symbol}
     changed = True
@@ -39,15 +42,20 @@ def is_reachable(grammar: List[Rule], start_symbol: str = None) -> bool:
         for rule in grammar:
             if rule.non_terminal in reachable:
                 for symbol in rule.right_part:
-                    if symbol.isupper() and symbol not in reachable:
+                    # Символ считается нетерминалом, если он есть в all_non_terminals
+                    if symbol in all_non_terminals and symbol not in reachable:
                         reachable.add(symbol)
                         changed = True
 
-    all_non_terminals = {rule.non_terminal for rule in grammar}
-    return reachable.issuperset(all_non_terminals)
+    unreachable = all_non_terminals - reachable
+    if unreachable:
+        print(f"Недостижимые нетерминалы: {', '.join(sorted(unreachable))}")
+        return False
+    return True
 
 
 def is_productive(grammar: List[Rule], token_types_name: List[str]) -> bool:
+    token_types_name.append('ε')
     # Сначала создаем множество всех нетерминалов
     all_non_terminals = {rule.non_terminal for rule in grammar}
 

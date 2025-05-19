@@ -1,0 +1,51 @@
+program -> block
+block -> declarations statements
+declarations -> declaration declarations
+declaration -> type ident SEMICOLON
+type -> INT
+type -> REAL
+statements -> statement statements
+statements -> ε
+statement -> ident ASSIGN expr SEMICOLON
+statement -> ifstatement
+statement -> WHILE expr LOOP block END
+statement -> PRINT expr SEMICOLON
+ifstatement -> IF expr THEN block END
+ifstatement -> IF expr THEN block ELSE block END
+expr -> simpleexpr
+expr -> expr relation simpleexpr
+relation -> EQ
+relation -> NOT_EQ
+relation -> GREATER_EQ
+relation -> LESS_EQ
+relation -> GREATER
+relation -> LESS
+simpleexpr -> term
+simpleexpr -> simpleexpr plusoperator term
+plusoperator -> PLUS
+plusoperator -> MINUS
+plusoperator -> OR
+term -> factor
+term -> term multoperator factor
+multoperator -> MULTIPLICATION
+multoperator -> DIVIDE
+multoperator -> AND
+multoperator -> DIV
+multoperator -> MOD
+ident -> compid
+ident -> IDENTIFIER
+ident -> compid LEFT_PAREN listsimpleexpr RIGHT_PAREN
+compid -> IDENTIFIER
+compid -> IDENTIFIER DOT compid
+listsimpleexpr -> simpleexpr
+listsimpleexpr -> simpleexpr listsimpleexpr
+factor -> ident
+factor -> NOT factor
+factor -> MINUS factor
+factor -> boolvalue
+factor -> numericvalue
+factor -> LEFT_PAREN expr RIGHT_PAREN
+boolvalue -> TRUE
+boolvalue -> FALSE
+numericvalue -> INTEGER
+numericvalue -> FLOAT

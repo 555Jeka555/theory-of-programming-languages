@@ -72,6 +72,7 @@ class Analyzer:
             if self.read_token() is None:
                 break
             symbol = self.get_state() if is_state else self.read_token().type
+            value = self.get_state() if is_state else self.read_token().value
 
             if symbol is None:
                 raise RuntimeError("Unexpected end")
@@ -87,6 +88,7 @@ class Analyzer:
             print()
 
             print("curr", symbol)
+            print("value", value)
             print("next", current_str.next_symbols)
             next_state = current_str.next_symbols.get(symbol, [])
 

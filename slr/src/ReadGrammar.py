@@ -47,29 +47,68 @@ def is_reachable(grammar: List[Rule], start_symbol: str = None) -> bool:
     return reachable.issuperset(all_non_terminals)
 
 
-KNOWN_TERMINALS = {'PLUS', 'MINUS', 'END', 'MULTIPLICATION', 'LEFT_PAREN', 'RIGHT_PAREN', 'IDENTIFIER'}  # Добавьте все терминалы вашей грамматики
+def is_productive(grammar: List[Rule], token_types_name: List[str]) -> bool:
+    # Сначала создаем множество всех нетерминалов
+    all_non_terminals = {rule.non_terminal for rule in grammar}
 
-def is_productive(grammar: List[Rule]) -> bool:
+    # Инициализируем множество продуктивных нетерминалов
     productive = set()
+
+    # Шаг 1: Находим сразу продуктивные правила (состоящие только из терминалов)
     for rule in grammar:
-        if all(symbol in KNOWN_TERMINALS for symbol in rule.right_part):
+        if all(symbol in token_types_name for symbol in rule.right_part):
             productive.add(rule.non_terminal)
 
+    # Шаг 2: Итеративно расширяем множество продуктивных нетерминалов
     changed = True
     while changed:
         changed = False
         for rule in grammar:
             if rule.non_terminal not in productive:
-                if all((symbol in productive) or (symbol in KNOWN_TERMINALS) for symbol in rule.right_part):
+                # Проверяем, все ли символы в правой части продуктивны или терминалы
+                all_productive = True
+                for symbol in rule.right_part:
+                    if symbol not in token_types_name and symbol not in productive:
+                        all_productive = False
+                        break
+
+                if all_productive:
                     productive.add(rule.non_terminal)
                     changed = True
 
-    return productive.issuperset({rule.non_terminal for rule in grammar})
+    # Шаг 3: Проверяем наличие непродуктивных нетерминалов
+    unproductive = all_non_terminals - productive
+
+    # Дополнительная проверка для циклических зависимостей
+    if unproductive:
+        # Строим граф зависимостей между нетерминалами
+        dependency_graph = {nt: set() for nt in all_non_terminals}
+        for rule in grammar:
+            for symbol in rule.right_part:
+                if symbol in all_non_terminals:
+                    dependency_graph[rule.non_terminal].add(symbol)
+
+        # Проверяем, есть ли в непродуктивных нетерминалах те,
+        # которые зависят только от других непродуктивных
+        new_unproductive = set()
+        for nt in unproductive:
+            # Если все зависимости ведут к другим непродуктивным
+            if all(dep in unproductive for dep in dependency_graph[nt]):
+                new_unproductive.add(nt)
+
+        if new_unproductive:
+            # Формируем сообщение об ошибке с указанием проблемных нетерминалов
+            raise UnproductiveSymbolError(
+                f"Грамматика содержит непродуктивные нетерминалы: {', '.join(sorted(new_unproductive))}\n"
+                f"Эти нетерминалы образуют циклическую зависимость без выхода на терминалы"
+            )
+
+    return len(unproductive) == 0
 
 
 def has_shift_reduce_conflict(grammar: List[Rule]) -> bool:
     for rule in grammar:
-        if rule.non_terminal in rule.right_part:  # Рекурсивное правило -> потенциальная неоднозначность
+        if rule.right_part.count(rule.non_terminal) > 1:
             return True
     return False
 
@@ -145,7 +184,7 @@ def find_alternative_rules_without_empty_symbol(rules: List[Rule]) -> List[Rule]
     return new_rules
 
 
-def read_grammar(input_file: TextIO) -> List[Rule]:
+def read_grammar(input_file: TextIO, token_types_name: List[str]) -> List[Rule]:
     rules = []
     for line in input_file:
         if "->" not in line:
@@ -162,7 +201,7 @@ def read_grammar(input_file: TextIO) -> List[Rule]:
     if not is_reachable(rules):
         raise UnreachableSymbolError("Грамматика содержит недостижимые нетерминалы")
 
-    if not is_productive(rules):
+    if not is_productive(rules, token_types_name):
         raise UnproductiveSymbolError("Грамматика содержит непродуктивные нетерминалы")
 
     if not is_unambiguous(rules):

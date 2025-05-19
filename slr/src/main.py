@@ -1,9 +1,10 @@
 import sys
-from typing import Optional, NamedTuple
+from typing import Optional, NamedTuple, TextIO, List
 from ReadGrammar import read_grammar, GrammarError
 from CreateTable import create_table
 from PrintTable import print_table
 from Analizer import Analyzer
+from token_type import TOKEN_TYPES
 
 
 class Args(NamedTuple):
@@ -19,6 +20,16 @@ def parse_args() -> Optional[Args]:
 
     return Args(input_file_name=sys.argv[1], output_file_name=sys.argv[2])
 
+
+def generate_token_types_name_from_file() -> List[str]:
+    token_types_name = []
+
+    for token_type in TOKEN_TYPES:
+        token_types_name.append(token_type.name)
+
+    return token_types_name
+
+
 # Написать грамматику для языка, индетификаторы, int, float, char, массивы, var, block, =, if, цикл, ввод, вывод. Лёгкий алгоритм (пузырёк, решето, перемножение матриц)
 def main() -> int:
     args = parse_args()
@@ -28,7 +39,7 @@ def main() -> int:
     try:
         with open(args.input_file_name, 'r') as input_file:
             try:
-                grammar = read_grammar(input_file)
+                grammar = read_grammar(input_file, generate_token_types_name_from_file())
                 print("Грамматика успешно прочитана и валидна")
             except GrammarError as e:
                 print(f"Ошибка в грамматике: {e}")

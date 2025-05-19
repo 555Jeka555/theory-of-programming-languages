@@ -22,4 +22,12 @@ BEGIN
         END;
     i := i + 1;
   END;
+
+  PRINT 'Sorted array:';
+  i := 0;
+  WHILE i < 10 LOOP
+  BEGIN
+    PRINT arr[i];
+    i := i + 1;
+  END;
 END.

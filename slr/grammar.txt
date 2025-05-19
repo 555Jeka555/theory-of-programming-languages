@@ -1,38 +1,56 @@
 program -> PROGRAM IDENTIFIER SEMICOLON block END DOT
+program -> PROGRAM IDENTIFIER SEMICOLON var_decl block END DOT
 program -> PROGRAM IDENTIFIER SEMICOLON
+
+var_decl -> VAR decl_list
+
+decl_list -> decl SEMICOLON decl_list
+decl_list -> decl SEMICOLON
+
 block -> BEGIN stmt_list DOT
 block -> BEGIN stmt_list SEMICOLON
 block -> BEGIN END
+
 stmt_list -> END
 stmt_list -> stmt stmt_list
+
 stmt -> decl SEMICOLON
 stmt -> assign SEMICOLON
 stmt -> if_stmt
 stmt -> while_stmt
 stmt -> io SEMICOLON
 stmt -> block
-decl -> VAR ident_list COLON type
+
+decl -> ident_list COLON type
 decl -> TYPE IDENTIFIER EQ type
+
 type -> INT
 type -> REAL
 type -> ARRAY LEFT_BRACKET INTEGER RIGHT_BRACKET OF type
+
 ident_list -> IDENTIFIER
 ident_list -> IDENTIFIER COMMA ident_list
+
 assign -> IDENTIFIER ASSIGN expr
 assign -> IDENTIFIER LEFT_BRACKET expr RIGHT_BRACKET ASSIGN expr
+
 if_stmt -> IF cond THEN stmt ELSE stmt
 if_stmt -> IF cond THEN stmt
 while_stmt -> WHILE cond LOOP stmt
+
 io -> PRINT expr
 io -> PRINT STRING
+
 expr -> expr PLUS term
 expr -> expr MINUS term
 expr -> term
+
 term -> term MULTIPLICATION factor
 term -> term DIVIDE factor
 term -> term DIV factor
 term -> term MOD factor
 term -> factor
+
 factor -> MINUS factor
 factor -> NOT factor
 factor -> LEFT_PAREN expr RIGHT_PAREN
@@ -42,7 +60,9 @@ factor -> INTEGER
 factor -> FLOAT
 factor -> TRUE
 factor -> FALSE
+
 cond -> expr rel_op expr
+
 rel_op -> EQ
 rel_op -> NOT_EQ
 rel_op -> LESS

@@ -1,9 +1,8 @@
 PROGRAM BubbleSort;
-BEGIN
-  VAR
+VAR
     arr: ARRAY[10] OF INT;
-  VAR
-    i: INT;
+    i, j, temp: INT;
+BEGIN
 
   arr[0] := 5;
   arr[1] := 2;

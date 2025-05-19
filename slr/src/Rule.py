@@ -22,21 +22,21 @@ class Rule:
                 self.right_part == other.right_part and
                 self.direction_symbols == other.direction_symbols)
 
+
 def is_non_terminal(s: str, rules: List[Rule]) -> bool:
-    """Проверяет, является ли строка нетерминалом"""
     return any(rule.non_terminal == s for rule in rules)
 
+
 def get_index_of_nonterminal(rules: List[Rule], non_terminal: str) -> Optional[int]:
-    """Возвращает индекс первого правила с заданным нетерминалом"""
     for i, rule in enumerate(rules):
         if rule.non_terminal == non_terminal:
             return i
     return None
 
+
 def get_rules_with_nonterminal(rules: List[Rule], non_terminal: str) -> List[Rule]:
-    """Возвращает все правила, где нетерминал встречается в правой части"""
     return [rule for rule in rules if non_terminal in rule.right_part]
 
+
 def get_nonterminal_rules(rules: List[Rule], non_terminal: str) -> List[Rule]:
-    """Возвращает все правила для заданного нетерминала"""
     return [rule for rule in rules if rule.non_terminal == non_terminal]

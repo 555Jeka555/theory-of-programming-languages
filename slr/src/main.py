@@ -19,7 +19,7 @@ def parse_args() -> Optional[Args]:
 
     return Args(input_file_name=sys.argv[1], output_file_name=sys.argv[2])
 
-
+# Написать грамматику для языка, индетификаторы, int, float, char, массивы, var, block, =, if, цикл, ввод, вывод. Лёгкий алгоритм (пузырёк, решето, перемножение матриц)
 def main() -> int:
     args = parse_args()
     if args is None:

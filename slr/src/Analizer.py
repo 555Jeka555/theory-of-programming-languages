@@ -99,7 +99,7 @@ class Analyzer:
                 if row_index is None:
                     raise RuntimeError("Invalid rule number")
 
-                row = self.grammar[row_index]
+                row = self.grammar[row_index]  # i = i - l Пример R5(8) i = i - 8
                 has_end = row.right_part[-1] == "#"
 
                 end = len(row.right_part) - 1 if has_end else len(row.right_part)

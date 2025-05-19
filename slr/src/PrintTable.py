@@ -3,32 +3,34 @@ from Table import Table, TableStr
 from Symbol import Symbol
 
 
-def print_names_of_columns(table: Table, output: TextIO) -> None:
-    output.write("\t")
-    for s in table.symbols:
-        output.write(f"'{s}'\t")
+def print_csv_header(table: Table, output: TextIO) -> None:
+    """Печатает заголовок CSV с именами столбцов"""
+    columns = [''] + [f"'{s}'" for s in table.symbols]
+    output.write(";".join(columns) + "\n")
+
+
+def format_symbols(symbols: List[Symbol]) -> str:
+    """Форматирует список символов в CSV-строку"""
+    return ",".join(f"'{symbol}'" for symbol in symbols)
+
+
+def print_csv_row(table_str: TableStr, symbols: Set[str], output: TextIO) -> None:
+    """Печатает строку таблицы в CSV-формате"""
+    # Основные символы
+    output.write(format_symbols(table_str.symbols))
+
+    # Ячейки переходов
+    for s in symbols:
+        if s not in table_str.next_symbols:
+            output.write(";")
+        else:
+            output.write(";" + format_symbols(table_str.next_symbols[s]))
+
     output.write("\n")
 
 
-def print_symbols(symbols: List[Symbol], output: TextIO) -> None:
-    for i, symbol in enumerate(symbols):
-        output.write(f"'{symbol}'")
-        if i + 1 != len(symbols):
-            output.write(", ")
-    output.write("\t")
-
-
-def print_next_symbols(table_str: TableStr, symbols: Set[str], output: TextIO) -> None:
-    for s in symbols:
-        if s not in table_str.next_symbols:
-            output.write("\t")
-        else:
-            print_symbols(table_str.next_symbols[s], output)
-
-
-def print_table(table: Table, output: TextIO) -> None:
-    print_names_of_columns(table, output)
+def export_to_csv(table: Table, output: TextIO) -> None:
+    """Экспортирует всю таблицу в CSV формате"""
+    print_csv_header(table, output)
     for table_str in table.strings:
-        print_symbols(table_str.symbols, output)
-        print_next_symbols(table_str, table.symbols, output)
-        output.write("\n")
+        print_csv_row(table_str, table.symbols, output)

@@ -2,7 +2,7 @@ import sys
 from typing import Optional, NamedTuple, TextIO, List
 from ReadGrammar import read_grammar, GrammarError
 from CreateTable import create_table
-from PrintTable import print_table
+from PrintTable import export_to_csv
 from Analizer import Analyzer
 from token_type import TOKEN_TYPES
 
@@ -49,7 +49,6 @@ def main() -> int:
         print(f"Input file is not found: {args.input_file_name}")
         return 1
 
-    # Вывод информации о грамматике
     for rule in grammar:
         print(f"{rule.non_terminal} -> ", end="")
         print(" ".join(rule.right_part), end="")
@@ -66,7 +65,7 @@ def main() -> int:
     try:
         with open(args.output_file_name, 'w') as output_file:
             table = create_table(grammar)
-            print_table(table, output_file)
+            export_to_csv(table, output_file)
     except IOError:
         print(f"Output file is not found: {args.output_file_name}")
         return 1

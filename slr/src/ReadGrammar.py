@@ -9,29 +9,24 @@ class GrammarError(Exception):
 
 
 class UnreachableSymbolError(GrammarError):
-    """Исключение для недостижимых символов"""
     pass
 
 
 class UnproductiveSymbolError(GrammarError):
-    """Исключение для непродуктивных символов"""
     pass
 
 
 class AmbiguousGrammarError(GrammarError):
-    """Исключение для неоднозначных грамматик"""
     pass
 
 
 def is_reachable(grammar: List[Rule], start_symbol: str = None) -> bool:
-    """Проверяет достижимость с правильным определением нетерминалов"""
     if not grammar:
         return True
 
     if start_symbol is None:
         start_symbol = grammar[0].non_terminal
 
-    # Все нетерминалы - это левые части правил
     all_non_terminals = {rule.non_terminal for rule in grammar}
 
     reachable = {start_symbol}
@@ -42,7 +37,6 @@ def is_reachable(grammar: List[Rule], start_symbol: str = None) -> bool:
         for rule in grammar:
             if rule.non_terminal in reachable:
                 for symbol in rule.right_part:
-                    # Символ считается нетерминалом, если он есть в all_non_terminals
                     if symbol in all_non_terminals and symbol not in reachable:
                         reachable.add(symbol)
                         changed = True
@@ -56,10 +50,8 @@ def is_reachable(grammar: List[Rule], start_symbol: str = None) -> bool:
 
 def is_productive(grammar: List[Rule], token_types_name: List[str]) -> bool:
     token_types_name.append('ε')
-    # Сначала создаем множество всех нетерминалов
     all_non_terminals = {rule.non_terminal for rule in grammar}
 
-    # Инициализируем множество продуктивных нетерминалов
     productive = set()
 
     # Шаг 1: Находим сразу продуктивные правила (состоящие только из терминалов)
@@ -122,7 +114,6 @@ def has_shift_reduce_conflict(grammar: List[Rule]) -> bool:
 
 
 def is_unambiguous(grammar: List[Rule]) -> bool:
-    """Проверяет, является ли грамматика однозначной."""
     return not has_shift_reduce_conflict(grammar)
 
 
@@ -205,7 +196,6 @@ def read_grammar(input_file: TextIO, token_types_name: List[str]) -> List[Rule]:
     rules = remove_rules_with_empty_symbol(rules)
     define_direction_symbols(rules)
 
-    # Проверки грамматики
     if not is_reachable(rules):
         raise UnreachableSymbolError("Грамматика содержит недостижимые нетерминалы")
 

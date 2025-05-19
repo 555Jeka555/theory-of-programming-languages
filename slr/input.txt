@@ -2,7 +2,12 @@ PROGRAM BubbleSort;
 VAR
     arr: ARRAY[10] OF INT;
     i, j, temp: INT;
+    ch: CHAR;
+    d: REAL;
 BEGIN
+  d := 2.3;
+  IF d == d THEN
+    READ ch;
 
   arr[0] := 5;
   arr[1] := 2;

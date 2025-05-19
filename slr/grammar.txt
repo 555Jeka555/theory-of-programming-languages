@@ -19,6 +19,7 @@ stmt -> assign SEMICOLON
 stmt -> if_stmt
 stmt -> while_stmt
 stmt -> io SEMICOLON
+stmt -> out SEMICOLON
 stmt -> block
 
 decl -> ident_list COLON type
@@ -26,6 +27,7 @@ decl -> TYPE IDENTIFIER EQ type
 
 type -> INT
 type -> REAL
+type -> CHAR
 type -> ARRAY LEFT_BRACKET INTEGER RIGHT_BRACKET OF type
 
 ident_list -> IDENTIFIER
@@ -40,6 +42,8 @@ while_stmt -> WHILE cond LOOP stmt
 
 io -> PRINT expr
 io -> PRINT STRING
+
+out -> READ IDENTIFIER
 
 expr -> expr PLUS term
 expr -> expr MINUS term

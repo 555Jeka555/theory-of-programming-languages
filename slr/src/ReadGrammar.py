@@ -47,44 +47,30 @@ def is_reachable(grammar: List[Rule], start_symbol: str = None) -> bool:
     return reachable.issuperset(all_non_terminals)
 
 
-def is_productive(grammar: List[Rule]) -> bool:
-    """Проверяет, все ли нетерминалы могут порождать терминальные строки."""
-    if not grammar:
-        return True
+KNOWN_TERMINALS = {'PLUS', 'MINUS', 'END', 'MULTIPLICATION', 'LEFT_PAREN', 'RIGHT_PAREN', 'IDENTIFIER'}  # Добавьте все терминалы вашей грамматики
 
+def is_productive(grammar: List[Rule]) -> bool:
     productive = set()
-    # Сначала находим все правила, которые прямо порождают терминалы
     for rule in grammar:
-        if all(not symbol.isupper() for symbol in rule.right_part):  # Все символы - терминалы
+        if all(symbol in KNOWN_TERMINALS for symbol in rule.right_part):
             productive.add(rule.non_terminal)
 
-    # Затем итеративно расширяем множество продуктивных нетерминалов
     changed = True
     while changed:
         changed = False
         for rule in grammar:
             if rule.non_terminal not in productive:
-                # Проверяем, все ли символы в правой части продуктивны или терминалы
-                if all((symbol in productive) or (not symbol.isupper()) for symbol in rule.right_part):
+                if all((symbol in productive) or (symbol in KNOWN_TERMINALS) for symbol in rule.right_part):
                     productive.add(rule.non_terminal)
                     changed = True
 
-    # Проверяем, все ли нетерминалы продуктивны
-    all_non_terminals = {rule.non_terminal for rule in grammar}
-    return productive.issuperset(all_non_terminals)
+    return productive.issuperset({rule.non_terminal for rule in grammar})
 
 
 def has_shift_reduce_conflict(grammar: List[Rule]) -> bool:
-    """Проверяет наличие конфликтов сдвиг-свёртка."""
-    for i, rule1 in enumerate(grammar):
-        for j, rule2 in enumerate(grammar):
-            if i == j:
-                continue
-            if (rule1.non_terminal == rule2.non_terminal and
-                    len(rule1.right_part) > 0 and
-                    len(rule2.right_part) > 0 and
-                    rule1.right_part[-1] == rule2.right_part[0]):
-                return True
+    for rule in grammar:
+        if rule.non_terminal in rule.right_part:  # Рекурсивное правило -> потенциальная неоднозначность
+            return True
     return False
 
 

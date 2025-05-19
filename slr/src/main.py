@@ -1,6 +1,6 @@
 import sys
 from typing import Optional, NamedTuple
-from ReadGrammar import read_grammar
+from ReadGrammar import read_grammar, GrammarError
 from CreateTable import create_table
 from PrintTable import print_table
 from Analizer import Analyzer
@@ -27,7 +27,13 @@ def main() -> int:
 
     try:
         with open(args.input_file_name, 'r') as input_file:
-            grammar = read_grammar(input_file)
+            try:
+                grammar = read_grammar(input_file)
+                print("Грамматика успешно прочитана и валидна")
+            except GrammarError as e:
+                print(f"Ошибка в грамматике: {e}")
+                return 1
+
     except IOError:
         print(f"Input file is not found: {args.input_file_name}")
         return 1

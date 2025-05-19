@@ -1,0 +1,2 @@
+S -> S PLUS S
+S -> MINUS

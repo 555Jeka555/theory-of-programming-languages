@@ -3,6 +3,7 @@ from Table import Table, TableStr, END_SYMBOL_IN_TABLE
 from Rule import Rule, is_non_terminal, get_nonterminal_rules, END_SYMBOL
 from Symbol import Symbol
 from GetDirectionSymbols import define_direction_symbols_after_non_terminal
+from ReadGrammar import AmbiguousGrammarError
 
 
 def add_symbols_from_right_part(rule: Rule, symbols: Set[str]) -> None:
@@ -20,7 +21,16 @@ def get_all_symbols(grammar: List[Rule]) -> Set[str]:
 def add_direction_symbols(table_str: TableStr, direction_symbols: List[Symbol], grammar: List[Rule]) -> None:
     for symbol in direction_symbols:
         if symbol.name in table_str.next_symbols:
-            if symbol not in table_str.next_symbols[symbol.name]:
+            # Проверяем, есть ли уже в этой клетке символы сдвига и свертки
+            existing_symbols = table_str.next_symbols[symbol.name]
+            has_shift = any(s.name != END_SYMBOL_IN_TABLE for s in existing_symbols)
+            has_reduce = any(s.name == END_SYMBOL_IN_TABLE for s in existing_symbols)
+
+            if (has_shift and symbol.name == END_SYMBOL_IN_TABLE) or (
+                    has_reduce and symbol.name != END_SYMBOL_IN_TABLE):
+                raise AmbiguousGrammarError(f"Конфликт сдвиг/свертка для символа '{symbol.name}' в строке таблицы")
+
+            if symbol not in existing_symbols:
                 table_str.next_symbols[symbol.name].append(symbol)
         else:
             table_str.next_symbols[symbol.name] = [symbol]
@@ -30,7 +40,14 @@ def add_end_direction_symbols(table_str: TableStr, direction_symbols: List[Symbo
     for symbol in direction_symbols:
         end_symbol = Symbol(name=END_SYMBOL_IN_TABLE, num_of_rule=num_of_rule)
         if symbol.name in table_str.next_symbols:
-            if end_symbol not in table_str.next_symbols[symbol.name]:
+            # Проверяем, есть ли уже в этой клетке символы сдвига
+            existing_symbols = table_str.next_symbols[symbol.name]
+            has_shift = any(s.name != END_SYMBOL_IN_TABLE for s in existing_symbols)
+
+            if has_shift:
+                raise AmbiguousGrammarError(f"Конфликт сдвиг/свертка для символа '{symbol.name}' в строке таблицы")
+
+            if end_symbol not in existing_symbols:
                 table_str.next_symbols[symbol.name].append(end_symbol)
         else:
             table_str.next_symbols[symbol.name] = [end_symbol]

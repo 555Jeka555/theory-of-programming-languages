@@ -13,10 +13,10 @@ BEGIN
   arr[1] := 2;
 
   i := 0;
-  WHILE i < 9 LOOP
+  WHILE i < 9
   BEGIN
     j := 0;
-        WHILE j < 9 - i LOOP
+        WHILE j < 9 - i
         BEGIN
             IF arr[j] > arr[j+1] THEN
             BEGIN
@@ -30,7 +30,7 @@ BEGIN
 
   PRINT 'Sorted array:';
   i := 0;
-  WHILE i < 10 LOOP
+  WHILE i < 10
   BEGIN
     PRINT arr[i];
     i := i + 1;

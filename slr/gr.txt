@@ -33,6 +33,7 @@ ident_list -> IDENTIFIER COMMA ident_list
 assign -> IDENTIFIER ASSIGN expr
 assign -> IDENTIFIER LEFT_BRACKET expr RIGHT_BRACKET ASSIGN expr
 
+if_stmt -> IF cond THEN stmt ELSE stmt
 if_stmt -> IF cond THEN stmt
 while_stmt -> WHILE cond stmt
 

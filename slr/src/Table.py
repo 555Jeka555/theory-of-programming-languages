@@ -4,10 +4,12 @@ from src.Symbol import Symbol
 
 END_SYMBOL_IN_TABLE = "R"
 
+
 @dataclass
 class TableStr:
     symbols: List[Symbol]
     next_symbols: Dict[str, List[Symbol]]
+
 
 @dataclass
 class Table:

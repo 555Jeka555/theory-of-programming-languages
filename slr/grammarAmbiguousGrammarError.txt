@@ -1,2 +1,4 @@
-S -> S PLUS S
-S -> MINUS
+A -> A PLUS
+A -> PLUS B
+B -> B PLUS
+B -> PLUS

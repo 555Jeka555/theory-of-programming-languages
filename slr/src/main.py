@@ -30,7 +30,8 @@ def generate_token_types_name_from_file() -> List[str]:
     return token_types_name
 
 
-# Написать грамматику для языка, индетификаторы, int, float, char, массивы, var, block, =, if, цикл, ввод, вывод. Лёгкий алгоритм (пузырёк, решето, перемножение матриц)
+# todo Написать грамматику для языка, индетификаторы, int, float, char, массивы, var, block, =, if, цикл, ввод, вывод. Лёгкий алгоритм (пузырёк, решето, перемножение матриц)
+# todo block BEGIN END - лишнее, THEN ELSE
 def main() -> int:
     args = parse_args()
     if args is None:
@@ -40,7 +41,6 @@ def main() -> int:
         with open(args.input_file_name, 'r') as input_file:
             try:
                 grammar = read_grammar(input_file, generate_token_types_name_from_file())
-                print("Грамматика успешно прочитана и валидна")
             except GrammarError as e:
                 print(f"Ошибка в грамматике: {e}")
                 return 1
@@ -64,7 +64,12 @@ def main() -> int:
 
     try:
         with open(args.output_file_name, 'w') as output_file:
-            table = create_table(grammar)
+            try:
+                table = create_table(grammar)
+            except GrammarError as e:
+                print(f"Ошибка в грамматике: {e}")
+                return 1
+
             export_to_csv(table, output_file)
     except IOError:
         print(f"Output file is not found: {args.output_file_name}")

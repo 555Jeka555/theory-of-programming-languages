@@ -30,8 +30,7 @@ type -> ARRAY LEFT_BRACKET INTEGER RIGHT_BRACKET OF type
 ident_list -> IDENTIFIER
 ident_list -> IDENTIFIER COMMA ident_list
 
-assign -> IDENTIFIER ASSIGN expr
-assign -> IDENTIFIER LEFT_BRACKET expr RIGHT_BRACKET ASSIGN expr
+assign -> full_id ASSIGN expr
 
 if_stmt -> IF cond THEN stmt ELSE stmt
 if_stmt -> IF cond THEN stmt
@@ -55,8 +54,7 @@ term -> factor
 factor -> MINUS factor
 factor -> NOT factor
 factor -> LEFT_PAREN expr RIGHT_PAREN
-factor -> IDENTIFIER
-factor -> IDENTIFIER LEFT_BRACKET expr RIGHT_BRACKET
+factor -> full_id
 factor -> INTEGER
 factor -> FLOAT
 factor -> TRUE
@@ -71,3 +69,6 @@ rel_op -> LESS
 rel_op -> GREATER
 rel_op -> LESS_EQ
 rel_op -> GREATER_EQ
+
+full_id -> IDENTIFIER
+full_id -> IDENTIFIER LEFT_BRACKET expr RIGHT_BRACKET

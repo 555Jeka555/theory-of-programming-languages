@@ -6,7 +6,7 @@ VAR
     d: REAL;
 BEGIN
   d := 2.3;
-  IF d == d THEN
+  IF d THEN
     READ ch;
 
   IF d == d THEN
@@ -35,7 +35,7 @@ BEGIN
   arr[1] := 2;
 
   i := 0;
-  WHILE i < 9
+  WHILE i
   BEGIN
     j := 0;
         WHILE j < 9 - i

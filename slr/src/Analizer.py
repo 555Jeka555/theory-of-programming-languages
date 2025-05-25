@@ -77,7 +77,9 @@ class Analyzer:
             if symbol is None:
                 raise RuntimeError("Unexpected end")
 
+            print()
             print(f"Current token: {symbol}")
+            print(f"Current value: {value}")
             print("State stack: ", end="")
             for state in self.state_stack:
                 for s in state:
@@ -85,10 +87,6 @@ class Analyzer:
                 print("|| ", end="")
             print()
             print("Token stack: ", " ".join(self.token_stack))
-            print()
-
-            print("curr", symbol)
-            print("value", value)
             print("next", current_str.next_symbols)
             next_state = current_str.next_symbols.get(symbol, [])
 

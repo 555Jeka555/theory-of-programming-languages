@@ -5,7 +5,7 @@ VAR
     ch: CHAR;
     d: REAL;
 BEGIN
-  d := 2.3;
+  var1 := 2.3;
   IF d THEN
     READ ch;
 

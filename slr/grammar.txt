@@ -51,10 +51,10 @@ term -> term DIV factor
 term -> term MOD factor
 term -> factor
 
+factor -> full_id
 factor -> MINUS factor
 factor -> NOT factor
 factor -> LEFT_PAREN expr RIGHT_PAREN
-factor -> full_id
 factor -> INTEGER
 factor -> FLOAT
 factor -> TRUE

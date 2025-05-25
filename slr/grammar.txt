@@ -8,6 +8,7 @@ decl_list -> decl SEMICOLON decl_list
 decl_list -> decl SEMICOLON
 
 block -> BEGIN stmt_list END
+block -> BEGIN END
 
 stmt_list -> SEMICOLON
 stmt_list -> stmt stmt_list
@@ -34,6 +35,15 @@ assign -> IDENTIFIER ASSIGN expr
 assign -> IDENTIFIER LEFT_BRACKET expr RIGHT_BRACKET ASSIGN expr
 
 if_stmt -> IF cond THEN stmt
+if_stmt -> IF cond THEN stmt_without_if ELSE stmt
+
+stmt_without_if -> assign SEMICOLON
+stmt_without_if -> while_stmt
+stmt_without_if -> io SEMICOLON
+stmt_without_if -> out SEMICOLON
+stmt_without_if -> block_without_if
+
+block_without_if -> BEGIN stmt_list END
 while_stmt -> WHILE cond stmt
 
 io -> PRINT expr

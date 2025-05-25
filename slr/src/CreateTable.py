@@ -21,8 +21,17 @@ def get_all_symbols(grammar: List[Rule]) -> Set[str]:
 def add_direction_symbols(table_str: TableStr, direction_symbols: List[Symbol], grammar: List[Rule]) -> None:
     for symbol in direction_symbols:
         if symbol.name in table_str.next_symbols:
-            # Проверяем, есть ли уже в этой клетке символы сдвига и свертки
             existing_symbols = table_str.next_symbols[symbol.name]
+
+            # Специальная обработка для ELSE - всегда выбираем сдвиг
+            if symbol.name == 'ELSE':
+                # Удаляем все reduce-действия для ELSE
+                table_str.next_symbols[symbol.name] = [s for s in existing_symbols
+                                                       if s.name != END_SYMBOL_IN_TABLE]
+                if symbol not in table_str.next_symbols[symbol.name]:
+                    table_str.next_symbols[symbol.name].append(symbol)
+                continue
+
             has_shift = any(s.name != END_SYMBOL_IN_TABLE for s in existing_symbols)
             has_reduce = any(s.name == END_SYMBOL_IN_TABLE for s in existing_symbols)
 
@@ -40,7 +49,10 @@ def add_end_direction_symbols(table_str: TableStr, direction_symbols: List[Symbo
     for symbol in direction_symbols:
         end_symbol = Symbol(name=END_SYMBOL_IN_TABLE, num_of_rule=num_of_rule)
         if symbol.name in table_str.next_symbols:
-            # Проверяем, есть ли уже в этой клетке символы сдвига
+            # Пропускаем добавление reduce для ELSE
+            if symbol.name == 'ELSE':
+                continue
+
             existing_symbols = table_str.next_symbols[symbol.name]
             has_shift = any(s.name != END_SYMBOL_IN_TABLE for s in existing_symbols)
 
@@ -122,6 +134,19 @@ def add_new_strings(table: Table, num_of_str: int, grammar: List[Rule]) -> None:
 
 
 def create_table(grammar: List[Rule]) -> Table:
+    # Автоматически добавляем правила для stmt_without_if, если их нет
+    has_stmt_without_if = any(r.non_terminal == 'stmt_without_if' for r in grammar)
+    if not has_stmt_without_if:
+        new_rules = [
+            Rule('stmt_without_if', ['assign', 'SEMICOLON']),
+            Rule('stmt_without_if', ['while_stmt']),
+            Rule('stmt_without_if', ['io', 'SEMICOLON']),
+            Rule('stmt_without_if', ['out', 'SEMICOLON']),
+            Rule('stmt_without_if', ['block_without_if']),
+            Rule('block_without_if', ['BEGIN', 'stmt_list', 'END'])
+        ]
+        grammar.extend(new_rules)
+
     table = Table(symbols=set(), strings=[])
     table.symbols = get_all_symbols(grammar)
 

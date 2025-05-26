@@ -18,6 +18,7 @@ stmt -> while_stmt
 stmt -> io SEMICOLON
 stmt -> out SEMICOLON
 stmt -> block
+stmt -> SEMICOLON
 
 decl -> ident_list COLON type
 decl -> TYPE IDENTIFIER EQ type

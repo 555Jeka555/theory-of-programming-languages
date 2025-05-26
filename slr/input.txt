@@ -6,6 +6,7 @@ VAR
     d: REAL;
 BEGIN
   var1 := 2.3;
+  ;
   IF d THEN
     READ ch;
 

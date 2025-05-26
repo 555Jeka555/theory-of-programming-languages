@@ -24,7 +24,6 @@ BEGIN
   IF d == d THEN
   BEGIN
     READ ch;
-    ;
   END
   ELSE
   BEGIN
@@ -51,7 +50,6 @@ BEGIN
             ;
         END
     i := i + 1;
-    ;
   END
 
   PRINT 'Sorted array:';
@@ -60,7 +58,5 @@ BEGIN
   BEGIN
     PRINT arr[i];
     i := i + 1;
-    ;
   END
-  ;
 END.

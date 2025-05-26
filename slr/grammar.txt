@@ -7,9 +7,9 @@ var_decl -> VAR decl_list
 decl_list -> decl SEMICOLON decl_list
 decl_list -> decl SEMICOLON
 
-block -> BEGIN stmt_list END
+block -> BEGIN stmt_list
 
-stmt_list -> SEMICOLON
+stmt_list -> END
 stmt_list -> stmt stmt_list
 
 stmt -> assign SEMICOLON

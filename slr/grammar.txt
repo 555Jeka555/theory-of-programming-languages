@@ -33,8 +33,8 @@ ident_list -> IDENTIFIER COMMA ident_list
 
 assign -> full_id ASSIGN expr
 
-if_stmt -> IF cond THEN stmt ELSE stmt
-if_stmt -> IF cond THEN stmt
+if_stmt -> IF cond THEN stmt ELSE stmt END
+if_stmt -> IF cond THEN stmt END
 while_stmt -> WHILE cond stmt
 
 io -> PRINT expr
@@ -72,4 +72,5 @@ rel_op -> LESS_EQ
 rel_op -> GREATER_EQ
 
 full_id -> IDENTIFIER
+full_id -> IDENTIFIER DOT IDENTIFIER
 full_id -> IDENTIFIER LEFT_BRACKET expr RIGHT_BRACKET

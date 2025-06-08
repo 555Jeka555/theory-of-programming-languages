@@ -23,15 +23,6 @@ def add_direction_symbols(table_str: TableStr, direction_symbols: List[Symbol], 
         if symbol.name in table_str.next_symbols:
             existing_symbols = table_str.next_symbols[symbol.name]
 
-            # Специальная обработка для ELSE - всегда выбираем сдвиг
-            if symbol.name == 'ELSE':
-                # Удаляем все reduce-действия для ELSE
-                table_str.next_symbols[symbol.name] = [s for s in existing_symbols
-                                                       if s.name != END_SYMBOL_IN_TABLE]
-                if symbol not in table_str.next_symbols[symbol.name]:
-                    table_str.next_symbols[symbol.name].append(symbol)
-                continue
-
             has_shift = any(s.name != END_SYMBOL_IN_TABLE for s in existing_symbols)
             has_reduce = any(s.name == END_SYMBOL_IN_TABLE for s in existing_symbols)
 
